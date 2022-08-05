@@ -7,8 +7,8 @@ import {
   Card,
 } from "./GistContent.styles";
 
-class GistContent extends Component {
-  renderFileContent = (fileData) => {
+const GistContent = ({ filename, fileContent }) => {
+  const renderFileContent = (fileData) => {
     if (Array.isArray(fileData)) {
       return fileData.map((item, i) => (
         <tr key={i}>
@@ -20,23 +20,21 @@ class GistContent extends Component {
       ));
     }
   };
-  render() {
-    const { filename, fileContent } = this.props;
-    return (
-      <Content>
-        <Card>
-          <CardHeader>
-            <span>{filename}</span>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <tbody>{this.renderFileContent(fileContent)}</tbody>
-            </Table>
-          </CardContent>
-        </Card>
-      </Content>
-    );
-  }
-}
+
+  return (
+    <Content>
+      <Card>
+        <CardHeader>
+          <span>{filename}</span>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <tbody>{renderFileContent(fileContent)}</tbody>
+          </Table>
+        </CardContent>
+      </Card>
+    </Content>
+  );
+};
 
 export default GistContent;

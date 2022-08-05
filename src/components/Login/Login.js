@@ -10,53 +10,48 @@ import {
 import { setLoggedInState } from "redux-state/gists/actions";
 import { TextField } from "./Login.styles";
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-  }
-  handleSubmit = (e) => {
-    const { loginUser } = this.props;
+const Login = ({ loginUser, router }) => {
+  const handleSubmit = (e) => {
     localStorage.setItem("gist_app", JSON.stringify({ logged_in: true }));
     loginUser(true);
-    this.props.router.navigate("/");
+    router.navigate("/");
     e.preventDefault();
   };
 
-  render() {
-    return (
-      <GridCenter>
-        <form onSubmit={this.handleSubmit}>
-          <ShadowGridItem widthPercent="400">
-            <GridTitle remSize="1.5">Login</GridTitle>
-            <TextField>
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                placeholder="Username"
-                name="username"
-                id="username"
-                required
-              />
-            </TextField>
-            <TextField>
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Password"
-                required
-              />
-            </TextField>
-            <TextField>
-              <input type="submit" value="Password" />
-            </TextField>
-          </ShadowGridItem>
-        </form>
-      </GridCenter>
-    );
-  }
-}
+  return (
+    <GridCenter>
+      <form onSubmit={handleSubmit}>
+        <ShadowGridItem widthPercent="400">
+          <GridTitle remSize="1.5">Login</GridTitle>
+          <TextField>
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              placeholder="Username"
+              name="username"
+              id="username"
+              required
+            />
+          </TextField>
+          <TextField>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+          </TextField>
+          <TextField>
+            <input type="submit" value="Password" />
+          </TextField>
+        </ShadowGridItem>
+      </form>
+    </GridCenter>
+  );
+};
+
 const mapDispatchToProps = {
   loginUser: setLoggedInState,
 };

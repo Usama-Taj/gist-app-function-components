@@ -2,8 +2,8 @@ import { getGistFile } from "api/gist.service";
 import React, { Component } from "react";
 import { Table } from "./GridFileView.styles";
 
-class GridFileView extends Component {
-  renderFileContent = (fileData) => {
+const GridFileView = ({ fileContent }) => {
+  const renderFileContent = (fileData) => {
     fileData.splice(10);
     if (Array.isArray(fileData)) {
       return fileData.map((item, i) => (
@@ -14,14 +14,11 @@ class GridFileView extends Component {
       ));
     }
   };
-  render() {
-    const { fileContent } = this.props;
-    return (
-      <Table>
-        <tbody>{this.renderFileContent(fileContent)}</tbody>
-      </Table>
-    );
-  }
-}
+  return (
+    <Table>
+      <tbody>{renderFileContent(fileContent)}</tbody>
+    </Table>
+  );
+};
 
 export default GridFileView;

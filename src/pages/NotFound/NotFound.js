@@ -1,7 +1,7 @@
 import React from "react";
 import { GridCenter, Message } from "shared-styles/Grid.styles";
 
-const NotAuthorized = () => {
+const NotFound = () => {
   return (
     <GridCenter>
       <Message remSize="4">404</Message>
@@ -10,4 +10,4 @@ const NotAuthorized = () => {
   );
 };
 
-export default NotAuthorized;
+export default NotFound;

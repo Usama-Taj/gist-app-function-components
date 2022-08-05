@@ -114,3 +114,12 @@ export function getvalidDateYMD(date) {
       : resdate.getDate().toString();
   return year + "-" + month + "-" + day;
 }
+
+// Utility Functions For Data
+export function getValidData(data) {
+  const extention = data?.match(/\.\w*$/) ?? "";
+  const filename = data?.replace(/\.\w*$/, "");
+  const new_filename =
+    filename?.length > 20 ? filename?.substring(0, 20) : filename;
+  return `${new_filename}${extention}`;
+}

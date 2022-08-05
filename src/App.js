@@ -8,14 +8,12 @@ import Profile from "pages/Profile/Profile";
 import MainLayout from "layouts/MainLayout";
 import AppRoutes from "routes/AppRoutes";
 
-class App extends Component {
-  render() {
-    return (
-      <MainLayout>
-        <AppRoutes />
-      </MainLayout>
-    );
-  }
-}
+const App = () => {
+  return (
+    <MainLayout>
+      <AppRoutes />
+    </MainLayout>
+  );
+};
 
 export default App;
