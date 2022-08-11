@@ -15,7 +15,7 @@ export const UserColumn = styled(TableCell)`
   justify-content: start;
 `;
 
-export const ColumnControls = styled(TableCell)`
+export const ColumnControls = styled.div`
   color: #5acba1;
   font-size: 1rem;
   & i {

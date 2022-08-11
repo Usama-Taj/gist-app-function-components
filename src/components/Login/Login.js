@@ -1,69 +1,69 @@
 import { withAuth } from "hoc/withAuth";
 import { withRouter } from "hoc/withRouter";
 import React, { Component } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import {
   GridCenter,
   GridTitle,
   ShadowGridItem,
 } from "shared-styles/Grid.styles";
 import { setLoggedInState } from "redux-state/gists/actions";
-import { TextField } from "./Login.styles";
+import {
+  SubmitButton,
+  TextField,
+  TextFieldContainer,
+  UserNameField,
+} from "./Login.styles";
+import { EnterOutlined, KeyOutlined, UserOutlined } from "@ant-design/icons";
+import Button from "components/common/Button/Button";
 
-const Login = ({ loginUser, router }) => {
-  const handleSubmit = (e) => {
+const Login = ({ router }) => {
+  // Redux Hooks
+  const dispatch = useDispatch();
+
+  // Functions
+  const handleLogin = (e) => {
     localStorage.setItem("gist_app", JSON.stringify({ logged_in: true }));
-    loginUser(true);
+    dispatch(setLoggedInState(true));
     router.navigate("/");
     e.preventDefault();
   };
 
+  // Rendering
   return (
     <GridCenter>
-      <form onSubmit={handleSubmit}>
+      <form>
         <ShadowGridItem widthPercent="400">
           <GridTitle remSize="1.5">Login</GridTitle>
-          <TextField>
+          <TextFieldContainer>
             <label htmlFor="username">Username</label>
-            <input
+            <TextField
+              prefix={<UserOutlined />}
               type="text"
               placeholder="Username"
               name="username"
               id="username"
-              required
             />
-          </TextField>
-          <TextField>
+          </TextFieldContainer>
+          <TextFieldContainer>
             <label htmlFor="password">Password</label>
-            <input
+            <TextField
+              prefix={<KeyOutlined />}
               type="password"
               name="password"
               id="password"
               placeholder="Password"
-              required
             />
-          </TextField>
-          <TextField>
-            <input type="submit" value="Password" />
-          </TextField>
+          </TextFieldContainer>
+          <TextFieldContainer>
+            <Button onClick={handleLogin} block icon={<EnterOutlined />}>
+              Login
+            </Button>
+          </TextFieldContainer>
         </ShadowGridItem>
       </form>
     </GridCenter>
   );
 };
 
-const mapDispatchToProps = {
-  loginUser: setLoggedInState,
-};
-
-const mapStateToProps = (state) => {
-  const {
-    gists: { logged_in },
-  } = state;
-  return { logged_in };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(withAuth(Login)));
+export default withRouter(withAuth(Login));

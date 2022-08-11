@@ -1,20 +1,44 @@
 import styled from "styled-components";
+import { Card } from "antd";
+const { Meta } = Card;
 
-export const Card = styled.div`
-  display: grid;
-  grid-template-rows: 5fr 0.1fr 1fr;
-  border-radius: 10px;
-  padding: 5px;
-  border: 1px solid rgb(107, 102, 102, 0.5);
-  border-radius: 15px;
-  box-shadow: -0px 0px 8px #d9d9d9, 0px -0px 8px #e7e7e7;
-  &:hover {
-    cursor: pointer;
-    border: 1px solid rgb(107, 102, 102, 0.9);
+export const GistCard = styled(Card)`
+  &.ant-card {
     border-radius: 15px;
-    box-shadow: -0px 0px 15px #d9d9d9, 0px -0px 15px #e7e7e7;
+    overflow: hidden;
+  }
+  & .ant-card-cover {
+    padding: 10px;
   }
 `;
+
+export const GistMeta = styled(Meta)`
+  & .ant-card-meta-title {
+    font-weight: bold;
+  }
+  ,
+  & .ant-card-meta-title,
+  .ant-card-meta-description {
+    font-size: 0.7rem;
+    color: #58a6ff;
+  }
+`;
+
+// export const Card = styled.div`
+//   display: grid;
+//   grid-template-rows: 5fr 0.1fr 1fr;
+//   border-radius: 10px;
+//   padding: 5px;
+//   border: 1px solid rgb(107, 102, 102, 0.5);
+//   border-radius: 15px;
+//   box-shadow: -0px 0px 8px #d9d9d9, 0px -0px 8px #e7e7e7;
+//   &:hover {
+//     cursor: pointer;
+//     border: 1px solid rgb(107, 102, 102, 0.9);
+//     border-radius: 15px;
+//     box-shadow: -0px 0px 15px #d9d9d9, 0px -0px 15px #e7e7e7;
+//   }
+// `;
 export const CardContent = styled.div`
   font-size: 0.6rem;
   font-family: "Courier New", Courier, monospace;

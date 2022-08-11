@@ -22,6 +22,9 @@ export const GistProfileImage = styled.img`
 export const GistInfo = styled.div`
   font-size: 0.7rem;
   color: #58a6ff;
+  & a:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const GistHistory = styled.div`
@@ -30,22 +33,22 @@ export const GistHistory = styled.div`
 `;
 
 export const GistControls = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  column-gap: 5px;
-  & input[type="text"] {
-    width: 40px;
+  display: flex;
+  justify-content: end;
+  column-gap: 40px;
+  & * {
+    cursor: pointer;
   }
   & i {
     color: #58a6ff;
-    cursor: pointer;
     font-size: 0.7rem;
   }
 `;
 export const GistControlLabel = styled.span`
+  display: inline;
   color: #58a6ff;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.5rem;
 `;
 
 export const Card = styled.div`

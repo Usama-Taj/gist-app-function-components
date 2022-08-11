@@ -1,16 +1,18 @@
 import styled from "styled-components";
-
+import { Button, Input } from "antd";
+import { GREEN } from "constants";
+import { WHITE } from "constants";
 export const HeaderArea = styled.header`
   position: fixed;
-  z-index: 10;
   width: 100%;
+  z-index: 10;
 `;
 
 export const NavBar = styled.nav`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  background-color: #5acba1;
+  background-color: ${GREEN};
 `;
 
 export const NavBarLogo = styled.img`
@@ -23,37 +25,46 @@ export const NavBarControls = styled.div`
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  & * {
+`;
+
+export const LoginButton = styled(Button)`
+  &.ant-btn-default {
+    color: ${GREEN};
     border-radius: 5px;
-    color: #fff;
-  }
-  & input[type="text"] {
-    border: 1px solid #fff;
-    height: 40%;
-    width: 70%;
-    background-color: #5acba1;
-    padding: 0 10px 0 10px;
-  }
-
-  & input[type="text"]::placeholder {
-    color: #fff;
-  }
-  & input[type="text"]:focus {
-    outline: none;
-    border: 2px solid #fff;
-  }
-
-  & button {
-    background-color: #fff;
-    height: 45%;
-    outline: none;
-    border-color: #fff;
-    color: #5acba1;
     width: 20%;
-    cursor: pointer;
   }
-  & button:active {
-    border-color: 2px solid #fff;
+  &.ant-btn:hover,
+  &.ant-btn:active,
+  &.ant-btn:focus {
+    color: ${GREEN};
+    border-color: ${GREEN};
+  }
+`;
+
+export const SearchBar = styled(Input)`
+  &.ant-input-affix-wrapper {
+    background-color: ${GREEN};
+    border: 1px solid ${WHITE};
+    border-radius: 5px;
+    height: 1.6rem;
+    width: 70%;
+    background-color: ${GREEN};
+    padding: 0 20px 0 20px;
+  }
+  &.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover,
+  &.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):active,
+  &.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):active {
+    border: 2px solid ${WHITE};
+    z-index: 1;
+  }
+
+  &.ant-input-affix-wrapper .anticon {
+    color: ${WHITE};
+  }
+  &.ant-input-affix-wrapper input,
+  &.ant-input-affix-wrapper input::placeholder {
+    background-color: ${GREEN};
+    color: white;
   }
 `;
 
@@ -70,8 +81,8 @@ export const MenuBar = styled.div`
 `;
 export const UserMenu = styled.ul`
   position: absolute;
-  background-color: #fff;
-  border: 1px solid rgb(107, 102, 102, 0.5);
+  background-color: ${WHITE};
+  border: 1px solid rgba(107, 102, 102, 0.5);
   border-radius: 5px;
   box-shadow: -0px 0px 8px #d9d9d9, 0px -0px 8px #e7e7e7;
   width: 10vw;
@@ -94,6 +105,6 @@ export const MenuItem = styled.li`
   }
   &:hover {
     background-color: ${({ clickable }) =>
-      clickable ? "rgb(107, 102, 102, 0.5)" : "none"};
+      clickable ? "rgba(107, 102, 102, 0.5)" : "none"};
   }
 `;

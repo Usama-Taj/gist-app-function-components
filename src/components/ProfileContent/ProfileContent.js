@@ -6,13 +6,14 @@ import {
   ViewProfileButton,
 } from "./ProfileContent.styles";
 import { Link } from "react-router-dom";
+import { Avatar } from "antd";
 
 const ProfileContent = ({ profile: { avatar_url, login, html_url } }) => {
   return (
     <div>
       <ProfileInfo>
         <div>
-          <ProfileImage src={avatar_url} alt="user" />
+          <Avatar src={avatar_url} alt="user" size={300} />
         </div>
         <div>{login}</div>
         <div>

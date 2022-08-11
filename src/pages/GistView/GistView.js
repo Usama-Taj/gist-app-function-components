@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import GistContent from "components/GistContent/GistContent";
-import GistHeader from "components/GistHeader/GistHeader";
+
 import { Gist } from "./GistView.styles";
 import { getTimeCreated } from "utilities/utilityFunctions";
 import { withRouter } from "hoc/withRouter";
 import { getGist } from "api/gist.service";
 import withErrorBoundaries from "hoc/withErrorBoundaries";
+import GistHeader from "components/common/GistHeader/GistHeader";
 
 const GistView = ({ router: { params } }) => {
   // Data Variables
@@ -35,12 +36,12 @@ const GistView = ({ router: { params } }) => {
       {gist && (
         <>
           <GistHeader
-            gist_id={gist.id}
+            id={gist.id}
             avatar={gist.owner?.avatar_url}
             username={gist.owner?.login}
             filename={Object.keys(gist.files)[0]}
-            created={getTimeCreated(gist.created_at)}
-            forks={gist.forks?.length || 0}
+            created_at={gist.created_at}
+            description={gist.description}
           />
           {renderGistFilesContents(gist.files)}
         </>

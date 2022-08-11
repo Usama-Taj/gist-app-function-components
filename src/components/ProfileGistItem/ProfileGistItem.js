@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import avatar_one from "assets/images/img_avatar.png";
 import {
   GistItem,
-  GistHeader,
   GistPorfileImageArea,
   GistProfileImage,
   GistInfo,
@@ -13,7 +12,7 @@ import {
   CardContent,
   Table,
 } from "./ProfileGistItem.styles";
-import { getTimeCreated } from "utilities/utilityFunctions";
+import { getTimeCreated, getValidData } from "utilities/utilityFunctions";
 import {
   checkGistStar,
   deleteAGist,
@@ -24,7 +23,11 @@ import {
 } from "api/gist.service";
 import { withRouter } from "hoc/withRouter";
 import { fetchProfileGists } from "redux-state/gists";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { Avatar } from "antd";
+import CodeCard from "components/common/CodeCard/CodeCard";
+import GistHeader from "components/common/GistHeader/GistHeader";
 
 const ProfileGistItem = ({ gist, router, getProfileGists }) => {
   // Data Variables
@@ -53,7 +56,19 @@ const ProfileGistItem = ({ gist, router, getProfileGists }) => {
     });
   }, []);
 
+  // Redux Hooks
+  const dispatch = useDispatch();
+
   // Functions
+
+  // Fork Function
+  const handleFork = () => {
+    if (!forked) {
+      forkOneGist(id).then((res) => {
+        setForked(res);
+      });
+    }
+  };
 
   const renderFileContent = (fileContent) => {
     return fileContent.map((line, i) => (
@@ -72,7 +87,7 @@ const ProfileGistItem = ({ gist, router, getProfileGists }) => {
     if (id) {
       deleteAGist(id).then((res) => {
         if (res) {
-          getProfileGists(username);
+          dispatch(fetchProfileGists(username));
         }
       });
     }
@@ -94,17 +109,27 @@ const ProfileGistItem = ({ gist, router, getProfileGists }) => {
   };
   return (
     <GistItem>
-      <GistHeader>
+      <GistHeader
+        id={id}
+        username={username}
+        created_at={created_at}
+        filename={Object.keys(files)[0]}
+        description={description}
+        avatar={avatar}
+      />
+      {/* <GistHeader>
         <GistPorfileImageArea>
-          <GistProfileImage src={avatar} alt="user" />
+          <Avatar src={avatar} alt="user" size={50} />
           <div>
             <GistInfo>
-              <span>{username}</span>&nbsp;/&nbsp;
-              <span>
+              {username}
+              {" / "}
+              <Link to={`/gist-view/${id}`}>
                 <b>{Object.keys(files)[0]}</b>
-              </span>
+              </Link>
             </GistInfo>
             <GistHistory>Created {getTimeCreated(created_at)} Ago</GistHistory>
+            <GistHistory>{getValidData(description)}</GistHistory>
           </div>
           {logged_in && (
             <GistControls>
@@ -120,9 +145,8 @@ const ProfileGistItem = ({ gist, router, getProfileGists }) => {
                   </div>
                 </>
               )}
-              <div>
+              <div onClick={starGist}>
                 <i
-                  onClick={starGist}
                   className={`fa-${starred ? "solid" : "regular"} fa-star`}
                 ></i>
                 <GistControlLabel>Star</GistControlLabel>
@@ -135,24 +159,20 @@ const ProfileGistItem = ({ gist, router, getProfileGists }) => {
             </GistControls>
           )}
         </GistPorfileImageArea>
-      </GistHeader>
+      </GistHeader> */}
       <div>
-        <Card>
-          <CardContent>
+        <Link to={`/gist-view/${id}`}>
+          <CodeCard hoverable>
             <Table>
               <tbody>
                 {fileContent.length > 0 && renderFileContent(fileContent)}
               </tbody>
             </Table>
-          </CardContent>
-        </Card>
+          </CodeCard>
+        </Link>
       </div>
     </GistItem>
   );
 };
 
-const mapDispatchToProps = {
-  getProfileGists: fetchProfileGists,
-};
-
-export default connect(null, mapDispatchToProps)(withRouter(ProfileGistItem));
+export default withRouter(ProfileGistItem);

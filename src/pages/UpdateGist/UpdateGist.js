@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { createAGist, getGist, updateAGist } from "api/gist.service";
-import FileInput from "components/FileInput/FileInput";
+import React, { useState, useEffect, useCallback } from "react";
+import { getGist, updateAGist } from "api/gist.service";
+import FileInput from "components/common/FileInput/FileInput";
 import { withAuth } from "hoc/withAuth";
 import { withRouter } from "hoc/withRouter";
 import { UpdateGistForm } from "./UpdateGist.styles";
+import {
+  AddFileButton,
+  CreateOrUpdateGistButton,
+  TextField,
+} from "shared-styles/InputFields.styles";
 
 const UpdateGist = ({ router: { params, navigate } }) => {
   // Data Variables
@@ -12,11 +17,16 @@ const UpdateGist = ({ router: { params, navigate } }) => {
   const [file_counter, setFile_counter] = useState(1);
   const [submit, setSubmit] = useState(false);
   const [input_files, setInput_files] = useState([]);
+  const [username, setUsername] = useState("");
   // useEffects
   useEffect(() => {
     if (params?.gist_id) {
       getGist(params?.gist_id).then((response) => {
-        const { files, description } = response;
+        const {
+          files,
+          description,
+          owner: { login },
+        } = response;
         const data_input_files = [];
         let file_id = 0;
         for (const [filename, file] of Object.entries(files)) {
@@ -27,6 +37,7 @@ const UpdateGist = ({ router: { params, navigate } }) => {
             file_content: file.content,
           });
         }
+        setUsername(login);
         setGist_description(description);
         setFile_counter(Object.keys(files).length);
         setInput_files(data_input_files);
@@ -49,21 +60,26 @@ const UpdateGist = ({ router: { params, navigate } }) => {
       files,
       gist_id: params.gist_id,
     };
+    console.log("Dat Object", data_obj);
     updateAGist(data_obj).then((response) => console.log(response));
-
+    navigate(`/profile/${username}`);
     e.preventDefault();
-    navigate("/");
   };
 
   const handleDescChange = (e) => {
     setGist_description(e.target.value);
   };
 
-  const handleAddFileInput = (e) => {
-    const new_file = { file_id: file_counter + 1 };
-    setFile_counter(file_counter + 1);
-    setInput_files([...input_files, new_file]);
-  };
+  const handleAddFileInput = useCallback(
+    (e) => {
+      setInput_files((input_files) => [
+        ...input_files,
+        { file_id: file_counter + 1 },
+      ]);
+      setFile_counter(file_counter + 1);
+    },
+    [input_files, file_counter]
+  );
 
   const getAllFiles = (file_id, filename, file_content) => {
     setInput_files((input_files) => {
@@ -79,20 +95,22 @@ const UpdateGist = ({ router: { params, navigate } }) => {
     });
   };
 
-  const removeFile = (file_id) => {
-    if (file_counter > 1) {
-      setFile_counter(file_counter - 1);
-      setInput_files((input_files) => {
-        const updated_input_files = input_files.map((file) => {
-          if (file.file_id === file_id) {
-            return { ...file, removed: true, file_content: "" };
-          }
-          return file;
+  const removeFile = useCallback(
+    (file_id) => {
+      if (file_counter > 1) {
+        setInput_files((input_files) => {
+          const updated_input_files = input_files.map((file) => {
+            if (file.file_id === file_id) {
+              return { ...file, removed: true, file_content: "" };
+            }
+            return file;
+          });
+          return updated_input_files;
         });
-        return updated_input_files;
-      });
-    }
-  };
+      }
+    },
+    [file_counter, input_files]
+  );
 
   const renderFileInputFields = (input_files) => {
     return input_files
@@ -112,19 +130,26 @@ const UpdateGist = ({ router: { params, navigate } }) => {
   // Rendering
   return (
     <UpdateGistForm onSubmit={handleSubmit}>
-      <input
+      <TextField
         type="text"
-        name="desc"
-        id="desc"
-        placeholder="Enter Gist Description..."
+        name="description"
+        id="description"
+        placeholder="Description"
         value={gist_description}
         onChange={handleDescChange}
+        autoComplete="off"
       />
       {renderFileInputFields(input_files)}
-      <button type="button" onClick={handleAddFileInput}>
+      <AddFileButton htmlType="button" onClick={handleAddFileInput}>
         Add File
-      </button>
-      <input type="submit" value="Update Gist" onClick={handleSubmitClick} />
+      </AddFileButton>
+      <CreateOrUpdateGistButton
+        htmlType="submit"
+        block
+        onClick={handleSubmitClick}
+      >
+        Update Gist
+      </CreateOrUpdateGistButton>
     </UpdateGistForm>
   );
 };

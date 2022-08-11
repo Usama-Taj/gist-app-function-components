@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import GistListHeader from "components/GistListHeader/GistListHeader";
 import GistListFooter from "components/GistListFooter/GistListFooter";
 import TableView from "components/TableView/TableView";
@@ -14,12 +14,7 @@ import { withAuth } from "hoc/withAuth";
 import Message from "components/Message/Message";
 import Spinner from "components/common/spinners/Spinner";
 
-const GistList = ({
-  router: { params, location },
-  getList,
-  gists_list,
-  gist_loading,
-}) => {
+const GistList = ({ router: { params, location } }) => {
   // Data Variables
   const STARTING_PAGE = 1;
 
@@ -28,25 +23,30 @@ const GistList = ({
   const [gists, setGists] = useState([]);
   const [profile_view, setProfile_view] = useState(!!params?.username);
   const [starred, setStarred] = useState(
-    location.pathname.split("/"[1]) === " starred"
+    location.pathname.split("/")[1] === "starred"
   );
 
   // useEffects
   useEffect(() => {
     if (profile_view) {
-      getList(STARTING_PAGE, params.username);
+      dispatch(fetchGistList(STARTING_PAGE, params.username));
     }
   }, [params.username, profile_view]);
 
   useEffect(() => {
     if (profile_view) {
-      getList(STARTING_PAGE, params.username);
+      dispatch(fetchGistList(STARTING_PAGE, params.username));
     } else if (starred) {
-      getList(STARTING_PAGE, "", starred);
+      dispatch(fetchGistList(STARTING_PAGE, "", starred));
     } else {
-      getList(STARTING_PAGE);
+      dispatch(fetchGistList(STARTING_PAGE));
     }
   }, []);
+
+  // Redux Hooks
+  const { gist_loading, gists_list } = useSelector((state) => state.gists);
+  const dispatch = useDispatch();
+
   // Functions
   const setGridViewType = (grid_view) => {
     setGrid_view(grid_view);
@@ -80,16 +80,4 @@ const GistList = ({
   );
 };
 
-const mapDispatchToProps = {
-  getList: fetchGistList,
-};
-const mapStateToProps = (state) => {
-  const {
-    gists: { gists_list, gist_loading },
-  } = state;
-  return { gists_list, gist_loading };
-};
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(withAuth(GistList)));
+export default withRouter(withAuth(GistList));

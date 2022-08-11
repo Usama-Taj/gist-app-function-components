@@ -1,20 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import {
-  Card,
-  CardContent,
-  CardInfo,
-  CardFooter,
-  History,
-  UserImage,
-} from "./GridItem.styles";
+import React, { useState, useEffect, useId } from "react";
 import GridFileView from "components/GridFileView/GridFileView";
 import { withRouter } from "hoc/withRouter";
-import { setSelectedGist } from "redux-state/gists/actions";
 import { getTimeCreated, getValidData } from "utilities/utilityFunctions";
-import { getGist, getGistFile } from "api/gist.service";
-import Spinner from "components/common/spinners/Spinner";
-import CircleSpinner from "components/common/spinners/CircleSpinner";
+import { getGist } from "api/gist.service";
+import { Card, Avatar } from "antd";
+import { CardContent, GistCard, GistMeta, History } from "./GridItem.styles";
 
 const GridItem = ({ gist, router }) => {
   // Data Variables
@@ -25,10 +15,9 @@ const GridItem = ({ gist, router }) => {
     created_at,
     description,
   } = gist;
-
+  const { Meta } = Card;
   // States
   const [fileContent, setFileContent] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // useEffects
   useEffect(() => {
@@ -36,42 +25,32 @@ const GridItem = ({ gist, router }) => {
     getGist(id).then((response) => {
       const { files } = response;
       setFileContent(files[Object.keys(files)[0]].content.split("\n"));
-      setLoading(false);
     });
   }, []);
-
   // Rendering
   return (
-    <Card
+    <GistCard
       onClick={(e) => {
         router.navigate(`/gist-view/${id}`);
       }}
+      hoverable
+      cover={
+        <CardContent>
+          <GridFileView fileContent={fileContent} />
+        </CardContent>
+      }
     >
-      <CardContent>
-        <GridFileView fileContent={fileContent} />
-      </CardContent>
-
-      <div>
-        <hr />
-      </div>
-      <CardFooter>
-        <div>
-          <UserImage src={avatar} alt="user" />
-        </div>
-        <div>
-          <div>
-            <CardInfo>
-              <span>{username}</span> /
-              <span>
-                <b>{getValidData(Object.keys(files)[0])}</b>
-              </span>
-            </CardInfo>
+      <GistMeta
+        avatar={<Avatar src={avatar} size={40} />}
+        title={`${username} / ${getValidData(Object.keys(files)[0])}`}
+        description={
+          <>
             <History>Created {getTimeCreated(created_at)} Ago</History>
             <History> {getValidData(description)}</History>
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+          </>
+        }
+      />
+    </GistCard>
   );
 };
 

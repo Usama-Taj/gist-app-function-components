@@ -1,10 +1,19 @@
+import { FileTextOutlined } from "@ant-design/icons";
+import { Input, Switch } from "antd";
 import { createAGist } from "api/gist.service";
-import FileInput from "components/FileInput/FileInput";
+import Button from "components/common/Button/Button";
+import FileInput from "components/common/FileInput/FileInput";
 import Message from "components/Message/Message";
 import { withAuth } from "hoc/withAuth";
 import { withRouter } from "hoc/withRouter";
-import React, { useEffect, useState } from "react";
-import { AddGistForm, Label } from "./AddGist.styles";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  AddFileButton,
+  CreateOrUpdateGistButton,
+  TextField,
+  GistTypeSwitch,
+} from "shared-styles/InputFields.styles";
+import { AddGistForm } from "./AddGist.styles";
 
 const AddGist = ({ router }) => {
   // Data Variables
@@ -16,59 +25,82 @@ const AddGist = ({ router }) => {
   const [submit, setSubmit] = useState(false);
   // Functions
 
-  const handleSubmit = (e) => {
-    let files = {};
-    input_files.forEach((fileItem) => {
-      const { filename, file_content: content } = fileItem;
-      files = { ...files, [filename]: { content } };
-    });
-    const data_obj = {
-      description: gist_description,
-      files,
-      public: type_public,
-    };
-    createAGist(data_obj).then((response) => console.log(response));
-    e.preventDefault();
-    router.navigate("/");
-  };
-
-  const submitClick = (e) => {
-    setSubmit(true);
-  };
-
-  const handleDescChange = (e) => {
-    setGist_description(e.target.value);
-  };
-
-  const handleCheck = (e) => {
-    setType_public(e.target.checked);
-  };
-
-  const handleAddFileInput = (e) => {
-    setInput_files([...input_files, { file_id: file_counter + 1 }]);
-    setFile_counter(file_counter + 1);
-  };
-
-  const getAllFiles = (file_id, filename, file_content) => {
-    setInput_files((input_files) => {
-      const filtered_input_files = input_files.filter(
-        (file) => file.file_id !== file_id
-      );
-      const new_file = {
-        file_id,
-        filename,
-        file_content,
+  const handleSubmit = useCallback(
+    (e) => {
+      let files = {};
+      input_files.forEach((fileItem) => {
+        const { filename, file_content: content } = fileItem;
+        files = { ...files, [filename]: { content } };
+      });
+      const data_obj = {
+        description: gist_description,
+        files,
+        public: type_public,
       };
-      return [...filtered_input_files, new_file];
-    });
-  };
+      console.log("Data to Submit", data_obj);
+      createAGist(data_obj).then((response) => console.log(response));
+      router.navigate(`/profile/${process.env.USERNAME}`);
+      e.preventDefault();
+    },
+    [gist_description, input_files, file_counter, type_public]
+  );
 
-  const removeFile = (file_id) => {
-    if (file_counter > 1) {
-      setFile_counter(file_counter - 1);
-      setInput_files(input_files.filter((file) => file.file_id !== file_id));
-    }
-  };
+  const submitClick = useCallback(
+    (e) => {
+      setSubmit(true);
+    },
+    [submit]
+  );
+
+  const handleDescChange = useCallback(
+    (e) => {
+      setGist_description(e.target.value);
+    },
+    [gist_description]
+  );
+
+  const handleCheck = useCallback(
+    (checked) => {
+      setType_public(checked);
+    },
+    [type_public]
+  );
+
+  const handleAddFileInput = useCallback(
+    (e) => {
+      setInput_files((input_files) => [
+        ...input_files,
+        { file_id: file_counter + 1 },
+      ]);
+      setFile_counter(file_counter + 1);
+    },
+    [input_files, file_counter]
+  );
+
+  const getAllFiles = useCallback(
+    (file_id, filename, file_content) => {
+      setInput_files((input_files) => {
+        const filtered_input_files = input_files.filter(
+          (file) => file.file_id !== file_id
+        );
+        const new_file = {
+          file_id,
+          filename,
+          file_content,
+        };
+        return [...filtered_input_files, new_file];
+      });
+    },
+    [input_files]
+  );
+  const removeFile = useCallback(
+    (file_id) => {
+      if (file_counter > 1) {
+        setInput_files(input_files.filter((file) => file.file_id !== file_id));
+      }
+    },
+    [file_counter, input_files]
+  );
 
   const renderFileInputFields = (input_files) => {
     return input_files.map(({ file_id }, i) => (
@@ -83,29 +115,29 @@ const AddGist = ({ router }) => {
   };
   return (
     <AddGistForm onSubmit={handleSubmit}>
-      <input
+      <TextField
         type="text"
-        name="desc"
-        id="desc"
-        placeholder="Enter Gist Description..."
+        name="description"
+        id="description"
+        placeholder="Description"
         value={gist_description}
         onChange={handleDescChange}
+        autoComplete="off"
       />
-      <div>
-        <Label>Public Gist:</Label>
-        <input
-          type="checkbox"
-          name="gist_type"
-          id="gist_type"
-          onChange={handleCheck}
-          checked={type_public}
-        />
-      </div>
+      <GistTypeSwitch
+        checkedChildren="Public"
+        unCheckedChildren="Private"
+        defaultChecked
+        onChange={handleCheck}
+        checked={type_public}
+      />
       {renderFileInputFields(input_files)}
-      <button type="button" onClick={handleAddFileInput}>
+      <Button type="primary" htmlType="button" onClick={handleAddFileInput}>
         Add File
-      </button>
-      <input type="submit" value="Create Gist" onClick={submitClick} />
+      </Button>
+      <Button htmlType="submit" type="primary" block onClick={submitClick}>
+        Create Gist
+      </Button>
     </AddGistForm>
   );
 };

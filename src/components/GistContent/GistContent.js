@@ -1,38 +1,31 @@
+import { Card } from "antd";
+import CodeCard from "components/common/CodeCard/CodeCard";
 import React, { Component } from "react";
-import {
-  Content,
-  CardHeader,
-  CardContent,
-  Table,
-  Card,
-} from "./GistContent.styles";
+import { Content, Table } from "./GistContent.styles";
 
 const GistContent = ({ filename, fileContent }) => {
   const renderFileContent = (fileData) => {
     if (Array.isArray(fileData)) {
-      return fileData.map((item, i) => (
-        <tr key={i}>
-          <td>
-            <b>{i + 1}</b>
-          </td>
-          <td>{item}</td>
-        </tr>
-      ));
+      return (
+        <tbody>
+          {fileData.map((item, i) => (
+            <tr key={i}>
+              <td>
+                <b>{i + 1}</b>
+              </td>
+              <td>{item}</td>
+            </tr>
+          ))}
+        </tbody>
+      );
     }
   };
 
   return (
     <Content>
-      <Card>
-        <CardHeader>
-          <span>{filename}</span>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <tbody>{renderFileContent(fileContent)}</tbody>
-          </Table>
-        </CardContent>
-      </Card>
+      <CodeCard title={filename}>
+        <Table>{renderFileContent(fileContent)}</Table>
+      </CodeCard>
     </Content>
   );
 };

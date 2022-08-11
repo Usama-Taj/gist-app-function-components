@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-
+import { MainContent } from "./Main.styles";
 const Main = ({ children }) => {
-  return <main>{children}</main>;
+  return <MainContent>{children}</MainContent>;
 };
 
 export default Main;

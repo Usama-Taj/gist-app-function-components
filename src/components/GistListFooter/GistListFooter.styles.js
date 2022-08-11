@@ -1,37 +1,42 @@
+import { Button } from "antd";
+import { GREEN, GREY, BLACK, WHITE } from "constants/index";
 import styled from "styled-components";
+
+export const NextButton = styled(Button)`
+  &.ant-btn-default {
+    color: ${GREEN};
+    border-radius: 5px;
+    margin: 0 5px;
+  }
+  &.ant-btn:not([disabled]):hover,
+  &.ant-btn:not([disabled]):active,
+  &.ant-btn:not([disabled]):focus {
+    color: ${GREEN};
+    border-color: ${GREY};
+  }
+`;
+
+export const PreviousButton = styled(Button)`
+  &.ant-btn-default {
+    color: ${GREEN};
+    background-color: ${GREY};
+    border-radius: 5px;
+    margin: 0 5px;
+  }
+  &.ant-btn:not([disabled]):hover,
+  &.ant-btn:not([disabled]):active,
+  &.ant-btn:not([disabled]):focus {
+    color: ${WHITE};
+    background-color: ${BLACK};
+    border-color: ${GREEN};
+  }
+`;
 
 export const PaginationControls = styled.div`
   display: flex;
-  justify-content: space-around;
-  & button {
-    background-color: #5acba1;
-    border-radius: 5px;
-    height: 45%;
-    outline: none;
-    border: 1px solid #224f3f;
-    color: #fff;
-    width: 100px;
-    height: 30px;
-    cursor: pointer;
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-  & button:disabled {
-    background-color: #666;
-    border-radius: 5px;
-    height: 45%;
-    outline: none;
-    border: 1px solid #334;
-    color: #fff;
-    width: 100px;
-    height: 30px;
-    cursor: pointer;
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-  & button:active {
-    border: 2px solid #000;
-  }
+  justify-content: space-between;
+  width: 70%;
+  margin: 20px auto;
 `;
 
 export const PageInfo = styled.div`

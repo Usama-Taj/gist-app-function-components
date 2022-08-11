@@ -188,7 +188,7 @@ body {
 body #root {
   background-color: #fff;
   display: grid;
-  grid-template-rows: 5vh 8fr 1fr;
+  grid-template-rows: 5vh 1fr;
   row-gap: 90px;
   box-sizing: border-box;
 }
