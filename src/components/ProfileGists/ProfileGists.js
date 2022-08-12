@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import React, { useMemo } from "react";
 import ProfileGistItem from "components/ProfileGistItem/ProfileGistItem";
 import { ProfileGistList } from "./ProfileGists.styles";
 
 const ProfileGists = ({ gists }) => {
-  const renderGists = (gists) => {
+  const renderGists = useMemo(() => {
     return gists.map((gist, i) => <ProfileGistItem key={i} gist={gist} />);
-  };
+  }, [gists]);
 
-  return <ProfileGistList>{renderGists(gists)}</ProfileGistList>;
+  return <ProfileGistList>{renderGists}</ProfileGistList>;
 };
 
 export default ProfileGists;

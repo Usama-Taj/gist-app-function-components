@@ -1,33 +1,28 @@
 import { withAuth } from "hoc/withAuth";
 import { withRouter } from "hoc/withRouter";
-import React, { Component } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useContext } from "react";
 import {
   GridCenter,
   GridTitle,
   ShadowGridItem,
 } from "shared-styles/Grid.styles";
-import { setLoggedInState } from "redux-state/gists/actions";
-import {
-  SubmitButton,
-  TextField,
-  TextFieldContainer,
-  UserNameField,
-} from "./Login.styles";
+import { TextField, TextFieldContainer } from "./Login.styles";
 import { EnterOutlined, KeyOutlined, UserOutlined } from "@ant-design/icons";
 import Button from "components/common/Button/Button";
+import { setLoggedInState } from "context/gists/actions";
+import { GistContext } from "context/gists";
 
 const Login = ({ router }) => {
-  // Redux Hooks
-  const dispatch = useDispatch();
+  // Context API
+  const [state, dispatch] = useContext(GistContext);
 
   // Functions
-  const handleLogin = (e) => {
+  const handleLogin = useCallback((e) => {
     localStorage.setItem("gist_app", JSON.stringify({ logged_in: true }));
     dispatch(setLoggedInState(true));
     router.navigate("/");
     e.preventDefault();
-  };
+  }, []);
 
   // Rendering
   return (

@@ -1,7 +1,6 @@
 import Message from "components/Message/Message";
 import NotAuthorized from "pages/NotAuthorized/NotAuthorized";
 import React from "react";
-import { useSelector } from "react-redux";
 
 export function withAuth(Component) {
   return function ComponentWithReduxState(props) {

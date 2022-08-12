@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import logo from "assets/logos/logo.svg";
 import avatar from "assets/images/img_avatar.png";
 import {
@@ -15,13 +15,12 @@ import {
 } from "./Header.styles";
 import { withRouter } from "hoc/withRouter";
 import { getGistsByUser } from "api/gist.service";
-import { useSelector, useDispatch } from "react-redux";
-import { setLoggedInState } from "redux-state/gists/actions";
-import { fetchGistList } from "redux-state/gists";
 import { SearchOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Divider, Dropdown, Menu } from "antd";
 import Button from "../Button/Button";
+import { GistContext } from "context/gists";
+import { setLoggedInState } from "context/gists/actions";
 
 const Header = ({ router }) => {
   // Data Variables
@@ -31,30 +30,32 @@ const Header = ({ router }) => {
   const [username, setUsername] = useState("");
 
   // Redux Hooks
-  const { logged_in } = useSelector((state) => state.gists);
-  const dispatch = useDispatch();
+  const [state, dispatch] = useContext(GistContext);
+  const { logged_in } = state;
 
   // Functions
-  const logoutUser = (e) => {
-    console.log("Log out");
+  const logoutUser = useCallback((e) => {
     localStorage.setItem("gist_app", JSON.stringify({ logged_in: false }));
     dispatch(setLoggedInState(false));
     router.navigate("/login");
-  };
+  }, []);
 
-  const handleLoginUser = (e) => {
+  const handleLoginUser = useCallback((e) => {
     router.navigate("/login");
-  };
+  }, []);
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = useCallback((e) => {
     setUsername(e.target.value);
-  };
+  }, []);
 
-  const handleEnter = (e) => {
-    if (e.code === "Enter") {
-      router.navigate(`/search/${username}`);
-    }
-  };
+  const handleEnter = useCallback(
+    (e) => {
+      if (e.code === "Enter") {
+        router.navigate(`/search/${username}`);
+      }
+    },
+    [username]
+  );
 
   // Dropdown Menu Items
   const menuItems = [
@@ -63,6 +64,7 @@ const Header = ({ router }) => {
       label: <Link to={`/profile/${process.env.USERNAME}`}>Your Gists</Link>,
       key: "2",
     },
+    { label: <Link to={`/`}>Public Gist</Link>, key: "5" },
     { label: <Link to={`/add-gist`}>Add Gist</Link>, key: "3" },
     {
       label: (

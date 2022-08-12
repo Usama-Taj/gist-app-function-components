@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import GistContent from "components/GistContent/GistContent";
 
 import { Gist } from "./GistView.styles";
-import { getTimeCreated } from "utilities/utilityFunctions";
 import { withRouter } from "hoc/withRouter";
 import { getGist } from "api/gist.service";
 import withErrorBoundaries from "hoc/withErrorBoundaries";
@@ -17,8 +16,9 @@ const GistView = ({ router: { params } }) => {
     getGist(params.gist_id).then((res) => setGist(res));
   }, []);
   // Functions
-  const renderGistFilesContents = (files) => {
-    if (files) {
+  const renderGistFilesContents = useMemo(() => {
+    if (gist?.files) {
+      const { files } = gist;
       return Object.keys(files).map((file, i) => {
         return (
           <GistContent
@@ -29,7 +29,7 @@ const GistView = ({ router: { params } }) => {
         );
       });
     }
-  };
+  }, [gist]);
   // Rendering
   return (
     <Gist>
@@ -43,7 +43,7 @@ const GistView = ({ router: { params } }) => {
             created_at={gist.created_at}
             description={gist.description}
           />
-          {renderGistFilesContents(gist.files)}
+          {renderGistFilesContents}
         </>
       )}
     </Gist>

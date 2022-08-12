@@ -1,13 +1,19 @@
 import GridItem from "components/GridItem/GridItem";
-import React, { Component } from "react";
+import React, { Component, useMemo } from "react";
 import { Content } from "./GridView.styles";
 
 const GridView = ({ gists }) => {
-  const renderGists = (gists) => {
-    if (Array.isArray(gists))
+  // Render Function
+  const renderGists = useMemo(() => {
+    if (Array.isArray(gists)) {
       return gists.map((item, i) => <GridItem key={i} gist={item} />);
-  };
-  return <Content>{renderGists(gists)}</Content>;
+    } else {
+      return null;
+    }
+  }, [gists]);
+
+  // Rendering
+  return <Content>{renderGists}</Content>;
 };
 
 export default GridView;

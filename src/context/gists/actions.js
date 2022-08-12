@@ -8,7 +8,7 @@ import {
   START_PROFILE_GISTS_LOADING,
   STOP_GIST_LOADING,
   STOP_PROFILE_GISTS_LOADING,
-} from "redux-state/actionTypes";
+} from "context/actionTypes";
 
 export const getGistList = (payload) => ({ type: GET_GIST_LIST, payload });
 

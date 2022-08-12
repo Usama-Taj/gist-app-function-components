@@ -8,7 +8,7 @@ import {
   GET_PROFILE_GISTS,
   START_PROFILE_GISTS_LOADING,
   STOP_PROFILE_GISTS_LOADING,
-} from "redux-state/actionTypes";
+} from "context/actionTypes";
 
 const initial_state = {
   gists_list: [],

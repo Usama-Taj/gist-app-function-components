@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { getGist, updateAGist } from "api/gist.service";
 import FileInput from "components/common/FileInput/FileInput";
 import { withAuth } from "hoc/withAuth";
@@ -45,30 +45,42 @@ const UpdateGist = ({ router: { params, navigate } }) => {
     }
   }, []);
   // Functions
-  const handleSubmitClick = (e) => {
-    setSubmit(true);
-  };
-  const handleSubmit = (e) => {
-    let files = {};
+  const handleSubmitClick = useCallback(
+    (e) => {
+      setSubmit(true);
+    },
+    [gist_description]
+  );
 
-    input_files.forEach((fileItem) => {
-      const { filename, file_content: content } = fileItem;
-      files = { ...files, [filename]: { content } };
-    });
-    const data_obj = {
-      description: gist_description,
-      files,
-      gist_id: params.gist_id,
-    };
-    console.log("Dat Object", data_obj);
-    updateAGist(data_obj).then((response) => console.log(response));
-    navigate(`/profile/${username}`);
-    e.preventDefault();
-  };
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-  const handleDescChange = (e) => {
-    setGist_description(e.target.value);
-  };
+      let files = {};
+
+      input_files.forEach((fileItem) => {
+        const { filename, file_content: content } = fileItem;
+        files = { ...files, [filename]: { content } };
+      });
+      const data_obj = {
+        description: gist_description,
+        files,
+        gist_id: params.gist_id,
+      };
+      const response = await updateAGist(data_obj);
+      if (response) {
+        navigate(`/profile/${username}`);
+      }
+    },
+    [gist_description, input_files, file_counter]
+  );
+
+  const handleDescChange = useCallback(
+    (e) => {
+      setGist_description(e.target.value);
+    },
+    [gist_description]
+  );
 
   const handleAddFileInput = useCallback(
     (e) => {
@@ -81,19 +93,22 @@ const UpdateGist = ({ router: { params, navigate } }) => {
     [input_files, file_counter]
   );
 
-  const getAllFiles = (file_id, filename, file_content) => {
-    setInput_files((input_files) => {
-      const filtered_input_files = input_files.filter(
-        (file) => file.file_id !== file_id
-      );
-      const new_file = {
-        file_id,
-        filename,
-        file_content,
-      };
-      return [...filtered_input_files, new_file];
-    });
-  };
+  const getAllFiles = useCallback(
+    (file_id, filename, file_content) => {
+      setInput_files((input_files) => {
+        const filtered_input_files = input_files.filter(
+          (file) => file.file_id !== file_id
+        );
+        const new_file = {
+          file_id,
+          filename,
+          file_content,
+        };
+        return [...filtered_input_files, new_file];
+      });
+    },
+    [input_files]
+  );
 
   const removeFile = useCallback(
     (file_id) => {
@@ -112,7 +127,7 @@ const UpdateGist = ({ router: { params, navigate } }) => {
     [file_counter, input_files]
   );
 
-  const renderFileInputFields = (input_files) => {
+  const renderFileInputFields = useMemo(() => {
     return input_files
       .filter((file) => !file?.removed)
       .map(({ file_id, filename, file_content }, i) => (
@@ -126,7 +141,7 @@ const UpdateGist = ({ router: { params, navigate } }) => {
           file_content={file_content}
         />
       ));
-  };
+  }, [input_files, submit]);
   // Rendering
   return (
     <UpdateGistForm onSubmit={handleSubmit}>
@@ -139,7 +154,7 @@ const UpdateGist = ({ router: { params, navigate } }) => {
         onChange={handleDescChange}
         autoComplete="off"
       />
-      {renderFileInputFields(input_files)}
+      {renderFileInputFields}
       <AddFileButton htmlType="button" onClick={handleAddFileInput}>
         Add File
       </AddFileButton>

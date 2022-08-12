@@ -6,7 +6,7 @@ import FileInput from "components/common/FileInput/FileInput";
 import Message from "components/Message/Message";
 import { withAuth } from "hoc/withAuth";
 import { withRouter } from "hoc/withRouter";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AddFileButton,
   CreateOrUpdateGistButton,
@@ -26,7 +26,8 @@ const AddGist = ({ router }) => {
   // Functions
 
   const handleSubmit = useCallback(
-    (e) => {
+    async (e) => {
+      e.preventDefault();
       let files = {};
       input_files.forEach((fileItem) => {
         const { filename, file_content: content } = fileItem;
@@ -37,15 +38,15 @@ const AddGist = ({ router }) => {
         files,
         public: type_public,
       };
-      console.log("Data to Submit", data_obj);
-      createAGist(data_obj).then((response) => console.log(response));
-      router.navigate(`/profile/${process.env.USERNAME}`);
-      e.preventDefault();
+      const response = await createAGist(data_obj);
+      if (response) {
+        router.navigate(`/profile/${process.env.USERNAME}`);
+      }
     },
     [gist_description, input_files, file_counter, type_public]
   );
 
-  const submitClick = useCallback(
+  const handleSubmitClick = useCallback(
     (e) => {
       setSubmit(true);
     },
@@ -102,7 +103,7 @@ const AddGist = ({ router }) => {
     [file_counter, input_files]
   );
 
-  const renderFileInputFields = (input_files) => {
+  const renderFileInputFields = useMemo(() => {
     return input_files.map(({ file_id }, i) => (
       <FileInput
         key={file_id}
@@ -112,7 +113,8 @@ const AddGist = ({ router }) => {
         submit={submit}
       />
     ));
-  };
+  }, [input_files, submit]);
+
   return (
     <AddGistForm onSubmit={handleSubmit}>
       <TextField
@@ -131,11 +133,16 @@ const AddGist = ({ router }) => {
         onChange={handleCheck}
         checked={type_public}
       />
-      {renderFileInputFields(input_files)}
+      {renderFileInputFields}
       <Button type="primary" htmlType="button" onClick={handleAddFileInput}>
         Add File
       </Button>
-      <Button htmlType="submit" type="primary" block onClick={submitClick}>
+      <Button
+        htmlType="submit"
+        type="primary"
+        block
+        onClick={handleSubmitClick}
+      >
         Create Gist
       </Button>
     </AddGistForm>

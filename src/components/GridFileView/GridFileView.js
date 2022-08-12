@@ -2,13 +2,13 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { getGistFile } from "api/gist.service";
 import Loader from "components/common/Loader/Loader";
-import React, { Component } from "react";
+import React, { Component, useMemo } from "react";
 import { GridCenter } from "shared-styles/Grid.styles";
 import { Table } from "./GridFileView.styles";
 
 const GridFileView = ({ fileContent }) => {
-  const renderFileContent = (fileData) => {
-    fileData.splice(10);
+  const renderFileContent = useMemo(() => {
+    const fileData = fileContent.slice(0, 10);
     if (Array.isArray(fileData)) {
       let content = fileData;
       if (fileData.length < 10) {
@@ -24,13 +24,13 @@ const GridFileView = ({ fileContent }) => {
         </tr>
       ));
     }
-  };
+  }, [fileContent]);
   if (!fileContent.length) {
     return <Loader loading={!fileContent.length} />;
   }
   return (
     <Table>
-      <tbody>{renderFileContent(fileContent)}</tbody>
+      <tbody>{renderFileContent}</tbody>
     </Table>
   );
 };

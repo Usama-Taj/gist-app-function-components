@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import {
   checkGistStar,
   forkOneGist,
+  getPublicStarredGists,
   starOneGist,
   unStarOneGist,
 } from "api/gist.service";
-import { getGistList } from "redux-state/gists/actions";
 import { ColumnControls } from "./ActionColumn.styles";
-import { GET_GIST_LIST } from "redux-state/actionTypes";
-import { fetchGistList } from "redux-state/gists";
 import { withRouter } from "hoc/withRouter";
+import {
+  startGistLoading,
+  getGistList,
+  setPageNumber,
+  stopGistLoading,
+} from "context/gists/actions";
+import { GistContext } from "context/gists";
 
 const ActionColumn = ({ id, router }) => {
   // Data Variables
@@ -23,28 +27,42 @@ const ActionColumn = ({ id, router }) => {
   useEffect(() => {
     checkGistStar(id).then((response) => setStarred(response));
   }, []);
-  // Other Hooks
-  const dispatch = useDispatch();
+  // Context
+  const [state, dispatch] = useContext(GistContext);
   // Functions
   // Star Function
-  const handleStar = () => {
-    if (starred) {
-      // Return Response True IF gist is unstarred
-      unStarOneGist(id).then((res) => setStarred(!res));
-      if (isStarredRoute) dispatch(fetchGistList(1, "", true));
-    } else {
-      // Return Response True IF gist is starred
-      starOneGist(id).then((res) => setStarred(res));
-    }
-  };
+  const handleStar = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (starred) {
+        // Return Response True IF gist is unstarred
+        unStarOneGist(id).then((res) => setStarred(!res));
+        if (isStarredRoute) {
+          dispatch(setPageNumber(1));
+          dispatch(startGistLoading());
+          getPublicStarredGists(page).then((res) => {
+            dispatch(getGistList(res));
+            dispatch(stopGistLoading());
+          });
+        }
+      } else {
+        // Return Response True If gist is starred
+        starOneGist(id).then((res) => setStarred(res));
+      }
+    },
+    [starred, isStarredRoute]
+  );
+
   // Fork Function
-  const handleFork = () => {
-    if (!forked) {
-      forkOneGist(id).then((res) => {
-        setForked(res);
-      });
-    }
-  };
+  const handleFork = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (!forked) {
+        forkOneGist(id).then((res) => setForked(res));
+      }
+    },
+    [forked]
+  );
   // useEffects
 
   // Rendering

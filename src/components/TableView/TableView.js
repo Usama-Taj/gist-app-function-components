@@ -1,16 +1,11 @@
-import React, { useState } from "react";
-import avatar_one from "assets/images/img_avatar.png";
-import avatar_two from "assets/images/img_avatar2.png";
-// import { TableContent, Table, TableHead, TableCell } from "./TableView.styles";
-import { Avatar, Table } from "antd";
-import TableRow from "components/TableRow/TableRow";
+import React from "react";
+import { Avatar } from "antd";
 import {
   getTimeFromDate,
   getValidData,
   getvalidDateDMMMY,
 } from "utilities/utilityFunctions";
-import { ColumnControls, TableContent, GistTable } from "./TableView.styles";
-import { starOneGist, unStarOneGist } from "api/gist.service";
+import { TableContent, GistTable } from "./TableView.styles";
 import ActionColumn from "components/ActionColumn";
 import { withRouter } from "hoc/withRouter";
 
@@ -56,6 +51,7 @@ const TableView = ({ gists, router }) => {
       render: (text, { id }, index) => <ActionColumn id={id} />,
     },
   ].filter((item) => item.dataIndex !== (logged_in ? null : "action"));
+
   // Rendering
   return (
     <TableContent>

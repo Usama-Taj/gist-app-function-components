@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import {
   TableGridControls,
   TableGridControlsItem,
@@ -6,12 +6,14 @@ import {
 } from "./GistListHeader.styles";
 
 const GistListHeader = ({ setGridViewType, grid_view }) => {
-  const setGirdView = () => {
+  const setGirdView = useCallback(() => {
     setGridViewType(true);
-  };
-  const setTableView = () => {
+  }, []);
+
+  const setTableView = useCallback(() => {
     setGridViewType(false);
-  };
+  }, []);
+
   return (
     <TableGridControls>
       <div></div>

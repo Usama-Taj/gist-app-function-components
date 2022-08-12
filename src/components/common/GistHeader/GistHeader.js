@@ -3,12 +3,19 @@ import {
   checkGistStar,
   deleteAGist,
   forkOneGist,
+  getGistsByUser,
+  starOneGist,
   unStarOneGist,
 } from "api/gist.service";
+import { getProfileGists } from "context/gists/actions";
+import { GistContext } from "context/gists";
 import { withRouter } from "hoc/withRouter";
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Link } from "react-router-dom";
+import {
+  startProfileGistLoading,
+  stopProfileGistLoading,
+} from "context/gists/actions";
 import { SpacedSpan } from "shared-styles/StyledComponents.styles";
 import { getTimeCreated, getValidData } from "utilities/utilityFunctions";
 import {
@@ -41,34 +48,40 @@ const GistHeader = (props) => {
     checkGistStar(id).then((res) => setStarred(res));
   }, []);
 
-  // Redux Hooks
-  const dispatch = useDispatch();
-  const { logged_in } = useSelector((state) => state.gists);
-  // Functions
-  const deleteGist = () => {
-    deleteAGist(id).then((res) => {
-      if (res) {
-        dispatch(fetchProfileGists(username));
-      }
-    });
-  };
-  // Fork Function
-  const handleFork = () => {
-    if (!forked) {
-      forkOneGist(id).then((res) => {
-        setForked(res);
-      });
-    }
-  };
+  // Context
+  const [state, dispatch] = useContext(GistContext);
 
-  const starGist = () => {
-    if (starred) {
-      unStarOneGist(id).then((res) => setStarred(!res));
-    } else {
-      starGist(id).then((res) => setStarred(res));
+  const { logged_in } = state;
+
+  // Functions
+  const deleteGist = useCallback(async () => {
+    const response = await deleteAGist(id);
+    if (response) {
+      dispatch(startProfileGistLoading());
+      const gists_response = await getGistsByUser(username);
+      dispatch(getProfileGists(gists_response));
+      dispatch(stopProfileGistLoading());
     }
-    setState(!starred);
-  };
+  }, [id, username]);
+
+  // Fork Function
+  const handleFork = useCallback(async () => {
+    if (!forked) {
+      const response = await forkOneGist(id);
+      setForked(response);
+    }
+  }, [forked]);
+
+  const starGist = useCallback(async () => {
+    if (starred) {
+      const unstar_response = await unStarOneGist(id);
+      setStarred(!unstar_response);
+    } else {
+      const star_response = await starOneGist(id);
+      setStarred(star_response);
+    }
+    setStarred(!starred);
+  }, [starred]);
   // Rendering
   return (
     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>

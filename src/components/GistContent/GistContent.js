@@ -1,14 +1,14 @@
 import { Card } from "antd";
 import CodeCard from "components/common/CodeCard/CodeCard";
-import React, { Component } from "react";
+import React, { Component, useMemo } from "react";
 import { Content, Table } from "./GistContent.styles";
 
 const GistContent = ({ filename, fileContent }) => {
-  const renderFileContent = (fileData) => {
-    if (Array.isArray(fileData)) {
+  const renderFileContent = useMemo(() => {
+    if (Array.isArray(fileContent)) {
       return (
         <tbody>
-          {fileData.map((item, i) => (
+          {fileContent.map((item, i) => (
             <tr key={i}>
               <td>
                 <b>{i + 1}</b>
@@ -19,12 +19,12 @@ const GistContent = ({ filename, fileContent }) => {
         </tbody>
       );
     }
-  };
+  }, [fileContent]);
 
   return (
     <Content>
       <CodeCard title={filename}>
-        <Table>{renderFileContent(fileContent)}</Table>
+        <Table>{renderFileContent}</Table>
       </CodeCard>
     </Content>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from "react";
+import React, { useState, useEffect, useId, useCallback } from "react";
 import GridFileView from "components/GridFileView/GridFileView";
 import { withRouter } from "hoc/withRouter";
 import { getTimeCreated, getValidData } from "utilities/utilityFunctions";
@@ -27,12 +27,17 @@ const GridItem = ({ gist, router }) => {
       setFileContent(files[Object.keys(files)[0]].content.split("\n"));
     });
   }, []);
+  // Functions
+  const handleCardClick = useCallback(
+    (e) => {
+      router.navigate(`/gist-view/${id}`);
+    },
+    [id]
+  );
   // Rendering
   return (
     <GistCard
-      onClick={(e) => {
-        router.navigate(`/gist-view/${id}`);
-      }}
+      onClick={handleCardClick}
       hoverable
       cover={
         <CardContent>

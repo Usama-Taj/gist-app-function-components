@@ -1,4 +1,10 @@
-import React, { Component, useState, useEffect, useLayoutEffect } from "react";
+import React, {
+  Component,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+} from "react";
 import {
   FileContent,
   RemoveFileButton,
@@ -27,17 +33,17 @@ const FileInput = ({
   }, [submit]);
 
   //Functions
-  const handleFileNameChange = (e) => {
+  const handleFileNameChange = useCallback((e) => {
     setFilename(e.target.value);
-  };
+  });
 
-  const handleFileContentChange = (e) => {
+  const handleFileContentChange = useCallback((e) => {
     setFile_content(e.target.value);
-  };
+  });
 
-  const handleRemoveFile = (e) => {
+  const handleRemoveFile = useCallback((e) => {
     removeFile(file_id);
-  };
+  });
 
   //Rendering
   return (

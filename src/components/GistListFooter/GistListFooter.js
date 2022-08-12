@@ -1,6 +1,12 @@
-import React, { Component } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchGistList } from "redux-state/gists";
+import { getPublicGists } from "api/gist.service";
+import {
+  getGistList,
+  setPageNumber,
+  startGistLoading,
+  stopGistLoading,
+} from "context/gists/actions";
+import { GistContext } from "context/gists";
+import React, { Component, useCallback, useContext } from "react";
 import {
   PaginationControls,
   PageInfo,
@@ -9,18 +15,26 @@ import {
 } from "./GistListFooter.styles";
 
 const GistListFooter = () => {
-  // Redux Hooks
-  const { page_number } = useSelector((state) => state.gists);
-  const dispatch = useDispatch();
+  // Context API
+  const [state, dispatch] = useContext(GistContext);
+  const { page_number } = state;
 
   // Functions
-  const moveBack = () => {
-    dispatch(fetchGistList(page_number - 1));
-  };
+  const moveBack = useCallback(async () => {
+    dispatch(startGistLoading());
+    dispatch(setPageNumber(page_number - 1));
+    const response = await getPublicGists(page_number - 1);
+    dispatch(getGistList(response));
+    dispatch(stopGistLoading());
+  }, [page_number]);
 
-  const moveNext = () => {
-    dispatch(fetchGistList(page_number + 1));
-  };
+  const moveNext = useCallback(async () => {
+    dispatch(startGistLoading());
+    dispatch(setPageNumber(page_number + 1));
+    const response = await getPublicGists(page_number + 1);
+    dispatch(getGistList(response));
+    dispatch(stopGistLoading());
+  }, [page_number]);
 
   // Rendering
   return (
